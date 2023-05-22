@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import "package:flutter_quiz_app/data/questions.dart";
 import "package:flutter_quiz_app/answer_button.dart";
 
 class QuestionScreen extends StatefulWidget {
-  const QuestionScreen({super.key});
+  const QuestionScreen({super.key, required this.onSelectAnswer});
+
+  final void Function(String answer) onSelectAnswer;
 
   @override
   State<QuestionScreen> createState() {
@@ -14,14 +17,18 @@ class QuestionScreen extends StatefulWidget {
 
 class _QuestionScreenState extends State<QuestionScreen> {
   var currentQuestionIndex = 0;
-  void answerQuestion() {
-    setState(() {
-      currentQuestionIndex++;
-    });
+
+  void answerQuestion(String selectedAnswer) {
+    widget.onSelectAnswer(selectedAnswer);
+    setState(
+      () {
+        currentQuestionIndex++;
+      },
+    );
   }
 
   @override
-  Widget build(context) {
+  Widget build(BuildContext context) {
     final currentQuestion = questions[currentQuestionIndex];
     return SizedBox(
       // we take size box to take entire screen
@@ -37,7 +44,11 @@ class _QuestionScreenState extends State<QuestionScreen> {
           children: [
             Text(
               currentQuestion.text,
-              style: const TextStyle(color: Colors.white),
+              style: GoogleFonts.lato(
+                color: const Color.fromARGB(255, 40, 23, 53),
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
@@ -45,7 +56,9 @@ class _QuestionScreenState extends State<QuestionScreen> {
               // triple dot is spread operator to return only individual widgets
               return AnswerButton(
                 answerText: answer,
-                onTap: answerQuestion,
+                onTap: () {
+                  answerQuestion(answer);
+                },
               );
             }),
             const SizedBox(height: 10),
